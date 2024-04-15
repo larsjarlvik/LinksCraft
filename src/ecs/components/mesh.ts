@@ -1,9 +1,12 @@
 import { Mat4 } from "wgpu-matrix";
 import { Context } from "../../engine/context";
 import { Component } from "../../engine/ecs";
+import { makeStructuredView } from "webgpu-utils";
 
 interface Uniforms {
-    modelViewMatrix: Mat4;
+    modelMatrix: Mat4;
+    viewMatrix: Mat4;
+    projectionMatrix: Mat4;
 }
 
 export class Mesh extends Component {
@@ -15,9 +18,8 @@ export class Mesh extends Component {
         super();
         this.name = name;
 
-        const uniformBufferSize = 4 * 16; // 4x4 matrix
         this.uniformBuffer = ctx.device.createBuffer({
-            size: uniformBufferSize,
+            size: ctx.pipelineDefs.uniforms.uniforms.size,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         });
 
@@ -35,7 +37,9 @@ export class Mesh extends Component {
     }
 
     public updateUniforms(ctx: Context, uniforms: Uniforms) {
-        const matrix = uniforms.modelViewMatrix as Float32Array;
-        ctx.device.queue.writeBuffer(this.uniformBuffer, 0, matrix.buffer, matrix.byteOffset, matrix.byteLength);
+        const data = makeStructuredView(ctx.pipelineDefs.uniforms.uniforms);
+        data.set(uniforms);
+
+        ctx.device.queue.writeBuffer(this.uniformBuffer, 0, data.arrayBuffer);
     }
 }

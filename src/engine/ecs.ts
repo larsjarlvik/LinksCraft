@@ -8,7 +8,7 @@ export abstract class System {
     // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
     public abstract componentsRequired: Set<Function>;
 
-    public abstract update(ctx: Context, entities: Set<Entity>);
+    public abstract update(entities: Set<Entity>, ctx: Context);
 
     public ecs: ECS;
 }
@@ -113,7 +113,7 @@ export class ECS {
 
     public update(ctx: Context) {
         for (const [system, entities] of this.systems.entries()) {
-            system.update(ctx, entities);
+            system.update(entities, ctx);
         }
 
         while (this.entitiesToDestroy.length > 0) {

@@ -1,15 +1,20 @@
+import { ShaderDataDefinitions, makeShaderDataDefinitions } from "webgpu-utils";
 import { fetchShader } from "./util/shader";
+import { Camera } from "./camera";
 
 export class Context {
     public device: GPUDevice;
     public context: GPUCanvasContext;
-    multisampleTexture: GPUTexture;
-    pipeline: GPURenderPipeline;
+    public camera: Camera;
+    public multisampleTexture: GPUTexture;
+    public pipeline: GPURenderPipeline;
+    public pipelineDefs: ShaderDataDefinitions;
 
     public async init(canvas: HTMLCanvasElement) {
         const adapter = await navigator.gpu.requestAdapter();
         this.device = await adapter.requestDevice();
         this.context = canvas.getContext("webgpu") as GPUCanvasContext;
+        this.camera = new Camera([0, 0, 5], [0, 0, 0]);
 
         canvas.width = canvas.clientWidth * window.devicePixelRatio;
         canvas.height = canvas.clientHeight * window.devicePixelRatio;
@@ -21,6 +26,7 @@ export class Context {
         });
 
         const shader = await fetchShader("triangle");
+        this.pipelineDefs = makeShaderDataDefinitions(shader.vert);
         this.pipeline = this.device.createRenderPipeline({
             layout: "auto",
             vertex: {

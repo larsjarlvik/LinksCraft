@@ -1,5 +1,7 @@
 struct Uniforms {
-  modelViewMatrix: mat4x4f,
+  modelMatrix: mat4x4f,
+  viewMatrix: mat4x4f,
+  projectionMatrix: mat4x4f,
 }
 @binding(0) @group(0) var<uniform> uniforms : Uniforms;
 
@@ -13,7 +15,7 @@ fn main(
         vec2(0.5, -0.5)
     );
 
-    return uniforms.modelViewMatrix * vec4f(pos[VertexIndex], 0.0, 1.0);
+    return uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix * vec4f(pos[VertexIndex], 0.0, 1.0);
 }
 
 @fragment

@@ -1,5 +1,7 @@
+import { Follow } from "./ecs/components/follow";
 import { Mesh } from "./ecs/components/mesh";
 import { Transform } from "./ecs/components/transform";
+import { FollowSystem } from "./ecs/systems/follow";
 import { RenderSystem } from "./ecs/systems/render";
 import { Context } from "./engine/context";
 import { ECS } from "./engine/ecs";
@@ -10,9 +12,10 @@ import { ECS } from "./engine/ecs";
 
     await ctx.init(document.getElementById("root") as HTMLCanvasElement);
 
-    ecs.addSystems([new RenderSystem(ctx)]);
+    ecs.addSystems([new FollowSystem(), new RenderSystem(ctx)]);
+
     ecs.addEntity([new Mesh(ctx, "Triangle"), new Transform([1, 0, 0])]);
-    ecs.addEntity([new Mesh(ctx, "Triangle"), new Transform([-1, 0, 0])]);
+    ecs.addEntity([new Mesh(ctx, "Triangle"), new Transform([-1, 0, 0]), new Follow()]);
 
     const frame = () => {
         ctx.update();
