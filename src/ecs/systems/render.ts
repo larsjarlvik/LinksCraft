@@ -1,9 +1,9 @@
 import { mat4 } from "wgpu-matrix";
-import { Context } from "../../engine/context";
-import { System } from "../../engine/ecs";
-import { Entity } from "../../engine/ecs";
-import { Mesh } from "../components/mesh";
-import { Transform } from "../components/transform";
+import { Context } from "engine/context";
+import { System } from "engine/ecs";
+import { Entity } from "engine/ecs";
+import { Mesh } from "ecs/components/mesh";
+import { Transform } from "ecs/components/transform";
 
 export class RenderSystem extends System {
     // biome-ignore lint/complexity/noBannedTypes: <explanation>

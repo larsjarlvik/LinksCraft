@@ -1,6 +1,6 @@
 import { Mat4 } from "wgpu-matrix";
-import { Context } from "../../engine/context";
-import { Component } from "../../engine/ecs";
+import { Context } from "engine/context";
+import { Component } from "engine/ecs";
 import { makeStructuredView } from "webgpu-utils";
 
 interface Uniforms {
