@@ -1,4 +1,4 @@
-import type { Context } from "./context";
+import { Context } from "./context";
 
 export type Entity = number;
 
@@ -8,7 +8,7 @@ export abstract class System {
     // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
     public abstract componentsRequired: Set<Function>;
 
-    public abstract update(ctx: Context, entities: Set<Entity>): void;
+    public abstract update(ctx: Context, entities: Set<Entity>);
 
     public ecs: ECS;
 }
@@ -43,7 +43,7 @@ class ComponentContainer {
     }
 
     // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
-    public delete(componentClass: Function): void {
+    public delete(componentClass: Function) {
         this.map.delete(componentClass);
     }
 }
@@ -67,11 +67,11 @@ export class ECS {
         return entity;
     }
 
-    public removeEntity(entity: Entity): void {
+    public removeEntity(entity: Entity) {
         this.entitiesToDestroy.push(entity);
     }
 
-    public addComponent(entity: Entity, component: Component): void {
+    public addComponent(entity: Entity, component: Component) {
         this.entities.get(entity).add(component);
         this.checkE(entity);
     }
@@ -81,12 +81,12 @@ export class ECS {
     }
 
     // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
-    public removeComponent(entity: Entity, componentClass: Function): void {
+    public removeComponent(entity: Entity, componentClass: Function) {
         this.entities.get(entity).delete(componentClass);
         this.checkE(entity);
     }
 
-    public addSystem(system: System): void {
+    public addSystem(system: System) {
         if (system.componentsRequired.size === 0) {
             console.warn("System not added: empty Components list.");
             console.warn(system);
@@ -101,11 +101,17 @@ export class ECS {
         }
     }
 
-    public removeSystem(system: System): void {
+    public addSystems(systems: System[]) {
+        for (const system of systems) {
+            this.addSystem(system);
+        }
+    }
+
+    public removeSystem(system: System) {
         this.systems.delete(system);
     }
 
-    public update(ctx: Context): void {
+    public update(ctx: Context) {
         for (const [system, entities] of this.systems.entries()) {
             system.update(ctx, entities);
         }
@@ -115,20 +121,20 @@ export class ECS {
         }
     }
 
-    private destroyEntity(entity: Entity): void {
+    private destroyEntity(entity: Entity) {
         this.entities.delete(entity);
         for (const entities of this.systems.values()) {
             entities.delete(entity); // no-op if doesn't have it
         }
     }
 
-    private checkE(entity: Entity): void {
+    private checkE(entity: Entity) {
         for (const system of this.systems.keys()) {
             this.checkES(entity, system);
         }
     }
 
-    private checkES(entity: Entity, system: System): void {
+    private checkES(entity: Entity, system: System) {
         const have = this.entities.get(entity);
         const need = system.componentsRequired;
 

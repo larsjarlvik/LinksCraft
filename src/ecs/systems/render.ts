@@ -1,7 +1,8 @@
-import type { Context } from "../../engine/context";
+import { mat4 } from "wgpu-matrix";
+import { Context } from "../../engine/context";
 import { System } from "../../engine/ecs";
-import type { Entity } from "../../engine/ecs";
-import type { Shader } from "../../engine/util/shader";
+import { Entity } from "../../engine/ecs";
+import { Shader } from "../../engine/util/shader";
 import { Mesh } from "../components/mesh";
 import { Transform } from "../components/transform";
 
@@ -33,9 +34,12 @@ export class RenderSystem extends System {
 
         for (const entity of entities) {
             const components = this.ecs.getComponents(entity);
+            const mesh = components.get(Mesh);
             const transform = components.get(Transform);
 
-            passEncoder.setBindGroup(0, transform.uniformBindGroup);
+            mesh.updateUniforms(ctx, { modelViewMatrix: mat4.translation(transform.position) });
+
+            passEncoder.setBindGroup(0, mesh.uniformBindGroup);
             passEncoder.draw(3);
         }
 
