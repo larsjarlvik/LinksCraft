@@ -1,0 +1,18 @@
+{
+  "name": "golf",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "esbuild src/index.ts --outdir=public/js --bundle --sourcemap --minify --servedir=public --loader:.wgsl=file"
+  },
+  "author": "Lars Jarlvik",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@biomejs/biome": "1.6.4",
+    "esbuild": "0.20.2"
+  },
+  "dependencies": {
+    "@webgpu/types": "^0.1.40"
+  }
+}
