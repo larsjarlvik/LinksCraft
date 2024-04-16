@@ -36,14 +36,14 @@ export class RenderSystem extends System {
         const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
         const aspect = ctx.context.canvas.width / ctx.context.canvas.height;
 
-        passEncoder.setPipeline(ctx.pipeline);
+        passEncoder.setPipeline(ctx.modelPipeline.pipeline);
 
         for (const entity of entities) {
             const components = this.ecs.getComponents(entity);
             const mesh = components.get(Mesh);
             const transform = components.get(Transform);
 
-            mesh.updateUniforms(ctx, {
+            ctx.modelPipeline.updateUniforms(ctx, mesh.uniformBuffer, {
                 modelMatrix: mat4.translation(transform.position),
                 viewMatrix: mat4.lookAt(ctx.camera.eye, ctx.camera.target, [0, 1, 0]),
                 projectionMatrix: mat4.perspective((2 * Math.PI) / 5, aspect, 0.1, 100.0),

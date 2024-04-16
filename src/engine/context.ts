@@ -1,6 +1,7 @@
 import { ShaderDataDefinitions, makeShaderDataDefinitions } from 'webgpu-utils';
 import { fetchShader } from './util/shader';
 import { Camera } from './camera';
+import { ModelPipeline } from './pipelines/model';
 
 export class Context {
     public device: GPUDevice;
@@ -8,8 +9,7 @@ export class Context {
     public camera: Camera;
     public multisampleTexture: GPUTexture;
     public depthTexture: GPUTexture;
-    public pipeline: GPURenderPipeline;
-    public pipelineDefs: ShaderDataDefinitions;
+    public modelPipeline: ModelPipeline;
 
     public async init(canvas: HTMLCanvasElement) {
         const adapter = await navigator.gpu.requestAdapter();
@@ -26,56 +26,7 @@ export class Context {
             alphaMode: 'premultiplied',
         });
 
-        const shader = await fetchShader('model');
-        this.pipelineDefs = makeShaderDataDefinitions(shader.vert);
-        this.pipeline = this.device.createRenderPipeline({
-            layout: 'auto',
-            vertex: {
-                module: this.device.createShaderModule({
-                    code: shader.vert,
-                }),
-                buffers: [
-                    {
-                        arrayStride: 12,
-                        stepMode: 'vertex',
-                        attributes: [
-                            {
-                                shaderLocation: 0,
-                                offset: 0,
-                                format: 'float32x3',
-                            },
-                            {
-                                shaderLocation: 1,
-                                offset: 0,
-                                format: 'float32x3',
-                            },
-                        ],
-                    },
-                ],
-            },
-            multisample: {
-                count: 4,
-            },
-            fragment: {
-                module: this.device.createShaderModule({
-                    code: shader.frag,
-                }),
-                targets: [
-                    {
-                        format: navigator.gpu.getPreferredCanvasFormat(),
-                    },
-                ],
-            },
-            primitive: {
-                topology: 'triangle-list',
-                cullMode: 'back',
-            },
-            depthStencil: {
-                depthWriteEnabled: true,
-                depthCompare: 'less',
-                format: 'depth24plus',
-            },
-        });
+        this.modelPipeline = new ModelPipeline(this, await fetchShader('model'));
     }
 
     public update() {
