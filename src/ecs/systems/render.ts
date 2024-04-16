@@ -6,7 +6,6 @@ import { Mesh } from 'ecs/components/mesh';
 import { Transform } from 'ecs/components/transform';
 
 export class RenderSystem extends System {
-    // biome-ignore lint/complexity/noBannedTypes: <explanation>
     componentsRequired = new Set<Function>([Mesh, Transform]);
 
     constructor(ctx: Context) {

@@ -1,15 +1,12 @@
-import { Context } from "./context";
+import { Context } from './context';
 
 export type Entity = number;
 
 export abstract class Component {}
 
 export abstract class System {
-    // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
     public abstract componentsRequired: Set<Function>;
-
     public abstract update(entities: Set<Entity>, ctx: Context);
-
     public ecs: ECS;
 }
 
@@ -17,7 +14,6 @@ export abstract class System {
 type ComponentClass<T extends Component> = new (...args: any[]) => T;
 
 class ComponentContainer {
-    // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
     private map = new Map<Function, Component>();
 
     public add(component: Component) {
@@ -27,12 +23,10 @@ class ComponentContainer {
         return this.map.get(componentClass) as T;
     }
 
-    // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
     public has(componentClass: Function): boolean {
         return this.map.has(componentClass);
     }
 
-    // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
     public hasAll(componentClasses: Iterable<Function>): boolean {
         for (const cls of componentClasses) {
             if (!this.map.has(cls)) {
@@ -42,7 +36,6 @@ class ComponentContainer {
         return true;
     }
 
-    // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
     public delete(componentClass: Function) {
         this.map.delete(componentClass);
     }
@@ -80,7 +73,6 @@ export class ECS {
         return this.entities.get(entity);
     }
 
-    // biome-ignore lint/complexity/noBannedTypes: It's generic on purpose
     public removeComponent(entity: Entity, componentClass: Function) {
         this.entities.get(entity).delete(componentClass);
         this.checkE(entity);
@@ -88,7 +80,7 @@ export class ECS {
 
     public addSystem(system: System) {
         if (system.componentsRequired.size === 0) {
-            console.warn("System not added: empty Components list.");
+            console.warn('System not added: empty Components list.');
             console.warn(system);
             return;
         }

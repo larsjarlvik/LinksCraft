@@ -29,7 +29,6 @@ export const createBuffer = async (
 ) => {
     const accessor = asset.gltf.accessors[accessorIndex];
     const data = await asset.bufferViewData(accessor.bufferView);
-    console.log(label, data);
 
     const buffer = ctx.device.createBuffer({
         size: data.byteLength,
@@ -53,7 +52,6 @@ export class Mesh extends Component {
 
         for (const mesh of asset.gltf.meshes) {
             for (const p of mesh.primitives) {
-                console.log(asset.gltf.accessors[p.indices].count);
                 Promise.all([
                     createBuffer(ctx, asset, p.indices, GPUBufferUsage.INDEX, 'index_buffer'),
                     createBuffer(ctx, asset, p.attributes.POSITION, GPUBufferUsage.VERTEX, 'vertex_buffer'),
