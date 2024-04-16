@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "esbuild src/index.ts --outdir=public/js --bundle --sourcemap --minify --servedir=public --loader:.wgsl=file"
+    "start": "esbuild src/index.ts --outdir=public/js --bundle --sourcemap --minify --servedir=public --loader:.wgsl=file",
+    "check": "biome check --apply ./"
   },
   "author": "Lars Jarlvik",
   "license": "ISC",

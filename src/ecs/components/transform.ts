@@ -1,5 +1,5 @@
-import { Vec3 } from 'wgpu-matrix';
 import { Component } from 'engine/ecs';
+import { Vec3 } from 'wgpu-matrix';
 
 export class Transform extends Component {
     public position: Vec3;

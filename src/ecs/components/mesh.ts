@@ -1,7 +1,7 @@
 import { Context } from 'engine/context';
 import { Component } from 'engine/ecs';
-import { GltfAsset } from 'gltf-loader-ts';
 import { Primitive } from 'engine/pipelines/model';
+import { GltfAsset } from 'gltf-loader-ts';
 
 export const createBuffer = async (
     ctx: Context,

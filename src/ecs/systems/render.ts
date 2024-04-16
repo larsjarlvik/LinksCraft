@@ -1,9 +1,9 @@
-import { mat3, mat4 } from 'wgpu-matrix';
+import { Mesh } from 'ecs/components/mesh';
+import { Transform } from 'ecs/components/transform';
 import { Context } from 'engine/context';
 import { System } from 'engine/ecs';
 import { Entity } from 'engine/ecs';
-import { Mesh } from 'ecs/components/mesh';
-import { Transform } from 'ecs/components/transform';
+import { mat3, mat4 } from 'wgpu-matrix';
 
 export class RenderSystem extends System {
     componentsRequired = new Set<Function>([Mesh, Transform]);
@@ -19,7 +19,7 @@ export class RenderSystem extends System {
                 {
                     view: ctx.multisampleTexture.createView(),
                     resolveTarget: canvasTexture.createView(),
-                    clearValue: [0.3, 0.3, 0.3, 1],
+                    clearValue: [0, 0, 0, 1],
                     loadOp: 'clear',
                     storeOp: 'store',
                 } as GPURenderPassColorAttachment,

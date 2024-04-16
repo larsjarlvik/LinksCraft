@@ -1,4 +1,7 @@
+import { Spin } from 'ecs/components/spin';
+import { SpinSystem } from 'ecs/systems/spin';
 import { load } from 'engine/util/model';
+import { GltfLoader } from 'gltf-loader-ts';
 import { Follow } from './ecs/components/follow';
 import { Mesh } from './ecs/components/mesh';
 import { Transform } from './ecs/components/transform';
@@ -6,9 +9,6 @@ import { FollowSystem } from './ecs/systems/follow';
 import { RenderSystem } from './ecs/systems/render';
 import { Context } from './engine/context';
 import { ECS } from './engine/ecs';
-import { GltfLoader } from 'gltf-loader-ts';
-import { SpinSystem } from 'ecs/systems/spin';
-import { Spin } from 'ecs/components/spin';
 
 (async () => {
     const ecs = new ECS();

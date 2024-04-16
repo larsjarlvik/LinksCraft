@@ -34,11 +34,11 @@ fn main(
 // Fragment
 @fragment
 fn main(input: VertexOutput) -> @location(0) vec4f {
-    let light_dir = normalize(vec3f(5.0, 0.0, 5.0));
+    let light_dir = normalize(vec3f(5.0, 5.0, 5.0));
 
     let diffuse_strength = max(dot(input.normal, light_dir), 0.0);
-    let diffuse_color = vec3f(1.0) * diffuse_strength;
+    let diffuse_color = vec3f(0.7) * diffuse_strength;
     let ambient_color = vec3f(0.3);
 
-    return vec4f((ambient_color + diffuse_color) * vec3f(1.0, 0.0, 0.0), 1.0);
+    return vec4f((ambient_color + diffuse_color) * vec3f(0.5), 1.0);
 }

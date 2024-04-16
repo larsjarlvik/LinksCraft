@@ -1,7 +1,7 @@
 import { ShaderDataDefinitions, makeShaderDataDefinitions } from 'webgpu-utils';
-import { fetchShader } from './util/shader';
 import { Camera } from './camera';
 import { ModelPipeline } from './pipelines/model';
+import { fetchShader } from './util/shader';
 
 export class Context {
     public device: GPUDevice;

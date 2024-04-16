@@ -1,4 +1,4 @@
-import { Vec3 } from "wgpu-matrix";
+import { Vec3 } from 'wgpu-matrix';
 
 export class Camera {
     public eye: Vec3;
