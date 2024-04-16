@@ -7,18 +7,22 @@ import { RenderSystem } from './ecs/systems/render';
 import { Context } from './engine/context';
 import { ECS } from './engine/ecs';
 import { GltfLoader } from 'gltf-loader-ts';
+import { SpinSystem } from 'ecs/systems/spin';
+import { Spin } from 'ecs/components/spin';
 
 (async () => {
     const ecs = new ECS();
     const ctx = new Context();
 
     const box = await load('box');
+    const avocado = await load('avocado');
 
     await ctx.init(document.getElementById('root') as HTMLCanvasElement);
 
-    ecs.addSystems([new FollowSystem(), new RenderSystem(ctx)]);
+    ecs.addSystems([new FollowSystem(), new SpinSystem(), new RenderSystem(ctx)]);
 
-    ecs.addEntity([new Mesh(ctx, box), new Transform([0, 0, 0])]);
+    ecs.addEntity([new Mesh(ctx, box), new Spin(), Transform.fromPosition([2.0, 0, 0])]);
+    ecs.addEntity([new Mesh(ctx, avocado), new Spin(), Transform.fromPositionScale([-2.0, 0, 0], 25.0)]);
 
     const frame = () => {
         ctx.update();

@@ -1,7 +1,7 @@
 import { Context } from 'engine/context';
 import { Shader } from 'engine/util/shader';
 import { ShaderDataDefinitions, makeShaderDataDefinitions, makeStructuredView } from 'webgpu-utils';
-import { Mat4 } from 'wgpu-matrix';
+import { Mat3, Mat4 } from 'wgpu-matrix';
 
 export interface Uniforms {
     modelMatrix: Mat4;

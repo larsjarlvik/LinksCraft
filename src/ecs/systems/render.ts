@@ -1,4 +1,4 @@
-import { mat4 } from 'wgpu-matrix';
+import { mat3, mat4 } from 'wgpu-matrix';
 import { Context } from 'engine/context';
 import { System } from 'engine/ecs';
 import { Entity } from 'engine/ecs';
@@ -44,7 +44,11 @@ export class RenderSystem extends System {
             const transform = components.get(Transform);
 
             ctx.modelPipeline.updateUniforms(ctx, mesh.uniformBuffer, {
-                modelMatrix: mat4.translation(transform.position),
+                modelMatrix: mat4.rotate(
+                    mat4.scale(mat4.translation(transform.position), transform.scale),
+                    transform.rotation,
+                    transform.angle,
+                ),
                 viewMatrix: mat4.lookAt(ctx.camera.eye, ctx.camera.target, [0, 1, 0]),
                 projectionMatrix: mat4.perspective((2 * Math.PI) / 5, aspect, 0.1, 100.0),
             });

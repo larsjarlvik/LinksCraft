@@ -6,8 +6,9 @@ struct Uniforms {
 @binding(0) @group(0) var<uniform> uniforms: Uniforms;
 
 struct VertexOutput {
-  @builtin(position) pos: vec4f,
-  @location(0) normal: vec3f,
+  @builtin(position) clip_pos: vec4f,
+  @location(0) world_pos: vec3f,
+  @location(1) normal: vec3f,
 }
 
 // Vertex
@@ -17,17 +18,27 @@ fn main(
   @location(1) normal: vec3f,
 ) -> VertexOutput {
     var output: VertexOutput;
-    output.pos = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix * vec4f(pos, 1.0);
-    output.normal = normal;
+    
+    var world_position = uniforms.modelMatrix * vec4f(pos, 1.0);
+    output.world_pos = world_position.xyz;
+    output.clip_pos = uniforms.projectionMatrix * uniforms.viewMatrix * world_position;
+    output.normal = normalize(mat3x3f(
+        uniforms.modelMatrix[0].xyz, 
+        uniforms.modelMatrix[1].xyz, 
+        uniforms.modelMatrix[2].xyz
+    ) * normal);
+
     return output;
 }
 
 // Fragment
 @fragment
 fn main(input: VertexOutput) -> @location(0) vec4f {
-    let normal = normalize(input.normal);
-    let light = dot(normal, -vec3f(0.5, -0.5, -0.5));
-    let color = vec3f(1.0, 0.0, 0.0) * light;
+    let light_dir = normalize(vec3f(5.0, 0.0, 5.0));
 
-    return vec4f(color, 1.0);
+    let diffuse_strength = max(dot(input.normal, light_dir), 0.0);
+    let diffuse_color = vec3f(1.0) * diffuse_strength;
+    let ambient_color = vec3f(0.3);
+
+    return vec4f((ambient_color + diffuse_color) * vec3f(1.0, 0.0, 0.0), 1.0);
 }
