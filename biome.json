@@ -8,7 +8,8 @@
     "formatter": {
         "lineWidth": 120,
         "indentStyle": "space",
-        "indentWidth": 4
+        "indentWidth": 4,
+        "formatWithErrors": true
     },
     "linter": {
         "enabled": true,
@@ -17,6 +18,11 @@
             "style": {
                 "useImportType": "off"
             }
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single"
         }
     }
 }
