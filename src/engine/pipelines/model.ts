@@ -23,9 +23,11 @@ export class ModelPipeline {
     constructor(ctx: Context, shader: Shader) {
         this.defs = makeShaderDataDefinitions(shader.vert);
         this.pipeline = ctx.device.createRenderPipeline({
+            label: 'model_pipeline',
             layout: 'auto',
             vertex: {
                 module: ctx.device.createShaderModule({
+                    label: 'model_vertex',
                     code: shader.vert,
                 }),
                 buffers: [
@@ -52,6 +54,7 @@ export class ModelPipeline {
             },
             fragment: {
                 module: ctx.device.createShaderModule({
+                    label: 'model_fragment',
                     code: shader.frag,
                 }),
                 targets: [

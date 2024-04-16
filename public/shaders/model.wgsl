@@ -10,6 +10,7 @@ struct VertexOutput {
   @location(0) normal: vec3f,
 }
 
+// Vertex
 @vertex
 fn main(
   @location(0) pos: vec3f,
@@ -22,15 +23,10 @@ fn main(
 }
 
 // Fragment
-struct VertexOutput {
-  @builtin(position) pos: vec4f,
-  @location(0) normal: vec3f,
-}
-
 @fragment
 fn main(input: VertexOutput) -> @location(0) vec4f {
     let normal = normalize(input.normal);
-    let light = dot(normal, -vec3f(0.5, -0.5, 0.5));
+    let light = dot(normal, -vec3f(0.5, -0.5, -0.5));
     let color = vec3f(1.0, 0.0, 0.0) * light;
 
     return vec4f(color, 1.0);
