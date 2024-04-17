@@ -13,6 +13,10 @@ export interface Primitive {
     indexBuffer: GPUBuffer;
     positionBuffer: GPUBuffer;
     normalBuffer: GPUBuffer;
+    texCoordBuffer: GPUBuffer;
+    baseColor: GPUTexture;
+    uniformBuffer: GPUBuffer;
+    uniformBindGroup: GPUBindGroup;
     length: number;
 }
 
@@ -44,6 +48,17 @@ export class ModelPipeline {
                                 shaderLocation: 1,
                                 offset: 0,
                                 format: 'float32x3',
+                            },
+                        ],
+                    },
+                    {
+                        arrayStride: 8,
+                        stepMode: 'vertex',
+                        attributes: [
+                            {
+                                shaderLocation: 2,
+                                offset: 0,
+                                format: 'float32x2',
                             },
                         ],
                     },

@@ -43,21 +43,21 @@ export class RenderSystem extends System {
             const mesh = components.get(Mesh);
             const transform = components.get(Transform);
 
-            ctx.modelPipeline.updateUniforms(ctx, mesh.uniformBuffer, {
-                modelMatrix: mat4.rotate(
-                    mat4.scale(mat4.translation(transform.position), transform.scale),
-                    transform.rotation,
-                    transform.angle,
-                ),
-                viewMatrix: mat4.lookAt(ctx.camera.eye, ctx.camera.target, [0, 1, 0]),
-                projectionMatrix: mat4.perspective((2 * Math.PI) / 5, aspect, 0.1, 100.0),
-            });
-
-            passEncoder.setBindGroup(0, mesh.uniformBindGroup);
-
             for (const primitive of mesh.primitives) {
+                ctx.modelPipeline.updateUniforms(ctx, primitive.uniformBuffer, {
+                    viewMatrix: mat4.lookAt(ctx.camera.eye, ctx.camera.target, [0, 1, 0]),
+                    projectionMatrix: mat4.perspective((2 * Math.PI) / 5, aspect, 0.1, 100.0),
+                    modelMatrix: mat4.rotate(
+                        mat4.scale(mat4.translation(transform.position), transform.scale),
+                        transform.rotation,
+                        transform.angle,
+                    ),
+                });
+
+                passEncoder.setBindGroup(0, primitive.uniformBindGroup);
                 passEncoder.setVertexBuffer(0, primitive.positionBuffer);
                 passEncoder.setVertexBuffer(1, primitive.normalBuffer);
+                passEncoder.setVertexBuffer(2, primitive.texCoordBuffer);
                 passEncoder.setIndexBuffer(primitive.indexBuffer, 'uint16');
                 passEncoder.drawIndexed(primitive.length);
             }
