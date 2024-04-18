@@ -7,6 +7,7 @@ export interface Uniforms {
     modelMatrix: Mat4;
     viewMatrix: Mat4;
     projectionMatrix: Mat4;
+    hasTexture: number;
 }
 
 export interface Primitive {
@@ -14,6 +15,7 @@ export interface Primitive {
     positionBuffer: GPUBuffer;
     normalBuffer: GPUBuffer;
     texCoordBuffer: GPUBuffer;
+    hasTexture: boolean;
     baseColor: GPUTexture;
     uniformBuffer: GPUBuffer;
     uniformBindGroup: GPUBindGroup;

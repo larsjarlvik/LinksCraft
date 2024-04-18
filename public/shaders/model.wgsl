@@ -2,6 +2,7 @@ struct Uniforms {
     modelMatrix: mat4x4f,
     viewMatrix: mat4x4f,
     projectionMatrix: mat4x4f,
+    hasTexture: u32,
 }
 @group(0) @binding(0) var<uniform> uniforms: Uniforms;
 @group(0) @binding(1) var textureSampler: sampler;
@@ -44,7 +45,11 @@ fn main(input: VertexOutput) -> @location(0) vec4f {
     let diffuse_strength = max(dot(input.normal, light_dir), 0.0);
     let diffuse_color = vec3f(0.7) * diffuse_strength;
     let ambient_color = vec3f(0.3);
-    let color = textureSample(baseColor, textureSampler, input.tex_coord);
+
+    var color: vec4f = vec4f(0.5);
+    if (uniforms.hasTexture == 1) {
+        color = textureSample(baseColor, textureSampler, input.tex_coord);
+    }
 
     return vec4f((ambient_color + diffuse_color) * color.rgb, color.a);
 }

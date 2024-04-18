@@ -45,6 +45,7 @@ export class RenderSystem extends System {
 
             for (const primitive of mesh.primitives) {
                 ctx.modelPipeline.updateUniforms(ctx, primitive.uniformBuffer, {
+                    hasTexture: primitive.baseColor.label === 'empty' ? 0 : 1,
                     viewMatrix: mat4.lookAt(ctx.camera.eye, ctx.camera.target, [0, 1, 0]),
                     projectionMatrix: mat4.perspective((2 * Math.PI) / 5, aspect, 0.1, 100.0),
                     modelMatrix: mat4.rotate(
