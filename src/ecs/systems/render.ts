@@ -1,11 +1,12 @@
 import { Mesh } from 'ecs/components/mesh';
 import { Transform } from 'ecs/components/transform';
-import { Context } from 'engine/context';
-import { System } from 'engine/ecs';
+import { Context, TIME_STEP } from 'engine/context';
+import { System, Target } from 'engine/ecs';
 import { Entity } from 'engine/ecs';
-import { mat3, mat4 } from 'wgpu-matrix';
+import { mat4 } from 'wgpu-matrix';
 
 export class RenderSystem extends System {
+    target = Target.Render;
     componentsRequired = new Set<Function>([Mesh, Transform]);
 
     constructor(ctx: Context) {
@@ -43,16 +44,13 @@ export class RenderSystem extends System {
             const mesh = components.get(Mesh);
             const transform = components.get(Transform);
 
+
             for (const primitive of mesh.primitives) {
                 ctx.modelPipeline.updateUniforms(ctx, primitive.uniformBuffer, {
                     hasTexture: primitive.baseColor.label === 'empty' ? 0 : 1,
                     viewMatrix: mat4.lookAt(ctx.camera.eye, ctx.camera.target, [0, 1, 0]),
                     projectionMatrix: mat4.perspective((2 * Math.PI) / 5, aspect, 0.1, 100.0),
-                    modelMatrix: mat4.rotate(
-                        mat4.scale(mat4.translation(transform.position), transform.scale),
-                        transform.rotation,
-                        transform.angle,
-                    ),
+                    modelMatrix: transform.getMatrix(ctx.getFrameAlpha())
                 });
 
                 passEncoder.setBindGroup(0, primitive.uniformBindGroup);
