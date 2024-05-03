@@ -2,11 +2,20 @@ import { Context } from './context';
 
 export type Entity = number;
 
-export abstract class Component {}
+export enum Target {
+    Update = 'update',
+    Render = 'render'
+}
+
+export abstract class Component {
+    public prevState: Component | null = null;
+    public clone() { };
+}
 
 export abstract class System {
+    public abstract target: Target;
     public abstract componentsRequired: Set<Function>;
-    public abstract update(entities: Set<Entity>, ctx: Context);
+    public abstract update(entities: Set<Entity>, ctx: Context): void;
     public ecs: ECS;
 }
 
@@ -38,6 +47,12 @@ class ComponentContainer {
 
     public delete(componentClass: Function) {
         this.map.delete(componentClass);
+    }
+
+    public clone() {
+        for (const component of this.map.values()) {
+            component.clone();
+        }
     }
 }
 
@@ -103,13 +118,20 @@ export class ECS {
         this.systems.delete(system);
     }
 
-    public update(ctx: Context) {
+    public update(ctx: Context, target: Target) {
         for (const [system, entities] of this.systems.entries()) {
+            if (system.target !== target) continue;
             system.update(entities, ctx);
         }
 
         while (this.entitiesToDestroy.length > 0) {
             this.destroyEntity(this.entitiesToDestroy.pop());
+        }
+    }
+
+    public store() {
+        for (const componentContainer of this.entities.values()) {
+            componentContainer.clone();
         }
     }
 

@@ -3,6 +3,11 @@ import { Camera } from './camera';
 import { ModelPipeline } from './pipelines/model';
 import { fetchShader } from './util/shader';
 
+// 50 updates per second
+export const TIME_STEP = 20;
+// Catch up with max 50 ticks per frame
+export const MAX_TICKS = 50;
+
 export class Context {
     public device: GPUDevice;
     public context: GPUCanvasContext;
@@ -10,6 +15,7 @@ export class Context {
     public multisampleTexture: GPUTexture;
     public depthTexture: GPUTexture;
     public modelPipeline: ModelPipeline;
+    public accumulator: number;
 
     public async init(canvas: HTMLCanvasElement) {
         const adapter = await navigator.gpu.requestAdapter();
@@ -27,12 +33,25 @@ export class Context {
         });
 
         this.modelPipeline = new ModelPipeline(this, await fetchShader('model'));
+        this.accumulator = 0;
     }
 
-    public update() {
+    public update(tick: () => void) {
         const canvasTexture = this.context.getCurrentTexture();
         this.multisampleTexture = this.recreateTargets(this.multisampleTexture, canvasTexture.format);
         this.depthTexture = this.recreateTargets(this.depthTexture, 'depth24plus');
+
+        let tickCount = 0;
+        while (this.accumulator < performance.now() - TIME_STEP && tickCount < MAX_TICKS) {
+            this.accumulator += TIME_STEP;
+            tick();
+            tickCount++;
+        }
+    }
+
+    /** Returns the time between previous and current frame */
+    public getFrameAlpha() {
+        return Math.max(Math.min(1.0, 1.0 - (performance.now() - this.accumulator) / TIME_STEP), 0.0);
     }
 
     private recreateTargets(target: GPUTexture, format: GPUTextureFormat) {

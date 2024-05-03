@@ -6,7 +6,7 @@ import { Transform } from './ecs/components/transform';
 import { FollowSystem } from './ecs/systems/follow';
 import { RenderSystem } from './ecs/systems/render';
 import { Context } from './engine/context';
-import { ECS } from './engine/ecs';
+import { ECS, Target } from './engine/ecs';
 
 (async () => {
     const ecs = new ECS();
@@ -23,8 +23,12 @@ import { ECS } from './engine/ecs';
     ecs.addEntity([new Mesh(ctx, avocado), new Spin(), Transform.fromPositionScale([-2.0, 0, 0], 25.0)]);
 
     const frame = () => {
-        ctx.update();
-        ecs.update(ctx);
+        ctx.update(() => {
+            ecs.store();
+            ecs.update(ctx, Target.Update);
+        });
+
+        ecs.update(ctx, Target.Render);
         requestAnimationFrame(frame);
     };
 
