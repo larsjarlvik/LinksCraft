@@ -43,7 +43,6 @@ export class RenderSystem extends System {
             const mesh = components.get(Mesh);
             const transform = components.get(Transform);
 
-
             for (const primitive of mesh.primitives) {
                 ctx.modelPipeline.updateUniforms(ctx, primitive.uniformBuffer, {
                     hasTexture: primitive.baseColor.label === 'empty' ? 0 : 1,

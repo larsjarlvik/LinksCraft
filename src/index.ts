@@ -12,15 +12,23 @@ import { ECS, Target } from './engine/ecs';
     const ecs = new ECS();
     const ctx = new Context();
 
-    const box = await load('box');
-    const avocado = await load('avocado');
-
-    await ctx.init(document.getElementById('root') as HTMLCanvasElement);
+    try {
+        await ctx.init(document.getElementById('root') as HTMLCanvasElement);
+    } catch (err) {
+        document.writeln(`ERROR: ${err.message}`);
+        console.error(err.message);
+        return;
+    }
 
     ecs.addSystems([new FollowSystem(), new SpinSystem(), new RenderSystem(ctx)]);
 
-    ecs.addEntity([new Mesh(ctx, box), new Spin(), Transform.fromPosition([2.0, 0, 0])]);
-    ecs.addEntity([new Mesh(ctx, avocado), new Spin(), Transform.fromPositionScale([-2.0, 0, 0], 25.0)]);
+    load('box').then(box => {
+        ecs.addEntity([new Mesh(ctx, box), new Spin(), Transform.fromPosition([2.0, 0, 0])]);
+    });
+
+    load('avocado').then(avocado => {
+        ecs.addEntity([new Mesh(ctx, avocado), new Spin(), Transform.fromPositionScale([-2.0, 0, 0], 25.0)]);
+    });
 
     const frame = () => {
         ctx.update(() => {
