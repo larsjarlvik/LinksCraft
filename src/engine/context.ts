@@ -10,21 +10,21 @@ export const MAX_TICKS = 50;
 
 export class Context {
     public device: GPUDevice;
+    public targetCanvas: HTMLCanvasElement;
     public context: GPUCanvasContext;
     public camera: Camera;
     public multisampleTexture: GPUTexture;
     public depthTexture: GPUTexture;
     public modelPipeline: ModelPipeline;
     public accumulator: number;
+    public aspect: number;
 
     public async init(canvas: HTMLCanvasElement) {
         const adapter = await navigator.gpu.requestAdapter();
+        this.targetCanvas = canvas;
         this.device = await adapter.requestDevice();
         this.context = canvas.getContext('webgpu') as GPUCanvasContext;
         this.camera = new Camera([0, 0, 5], [0, 0, 0]);
-
-        canvas.width = canvas.clientWidth * window.devicePixelRatio;
-        canvas.height = canvas.clientHeight * window.devicePixelRatio;
 
         this.context.configure({
             device: this.device,
@@ -34,14 +34,24 @@ export class Context {
 
         this.modelPipeline = new ModelPipeline(this, await fetchShader('model'));
         this.accumulator = 0;
+
+        window.addEventListener('resize', this.resize.bind(this));
+        this.resize();
+    }
+
+    private resize() {
+        const canvasTexture = this.context.getCurrentTexture();
+
+        this.targetCanvas.width = this.targetCanvas.clientWidth * window.devicePixelRatio;
+        this.targetCanvas.height = this.targetCanvas.clientHeight * window.devicePixelRatio;
+        this.multisampleTexture = this.recreateTargets(this.multisampleTexture, canvasTexture.format);
+        this.depthTexture = this.recreateTargets(this.depthTexture, 'depth24plus');
+        this.aspect = this.context.canvas.width / this.context.canvas.height;
     }
 
     public update(tick: () => void) {
-        const canvasTexture = this.context.getCurrentTexture();
-        this.multisampleTexture = this.recreateTargets(this.multisampleTexture, canvasTexture.format);
-        this.depthTexture = this.recreateTargets(this.depthTexture, 'depth24plus');
-
         let tickCount = 0;
+
         while (this.accumulator < performance.now() - TIME_STEP && tickCount < MAX_TICKS) {
             this.accumulator += TIME_STEP;
             tick();
@@ -59,6 +69,7 @@ export class Context {
 
         if (!target || target.width !== canvasTexture.width || target.height !== canvasTexture.height) {
             if (target) target.destroy();
+
             return this.device.createTexture({
                 format,
                 usage: GPUTextureUsage.RENDER_ATTACHMENT,

@@ -35,7 +35,6 @@ export class RenderSystem extends System {
 
         const commandEncoder = ctx.device.createCommandEncoder();
         const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-        const aspect = ctx.context.canvas.width / ctx.context.canvas.height;
 
         passEncoder.setPipeline(ctx.modelPipeline.pipeline);
 
@@ -49,7 +48,7 @@ export class RenderSystem extends System {
                 ctx.modelPipeline.updateUniforms(ctx, primitive.uniformBuffer, {
                     hasTexture: primitive.baseColor.label === 'empty' ? 0 : 1,
                     viewMatrix: mat4.lookAt(ctx.camera.eye, ctx.camera.target, [0, 1, 0]),
-                    projectionMatrix: mat4.perspective((2 * Math.PI) / 5, aspect, 0.1, 100.0),
+                    projectionMatrix: mat4.perspective((2 * Math.PI) / 5, ctx.aspect, 0.1, 100.0),
                     modelMatrix: transform.getMatrix(ctx.getFrameAlpha())
                 });
 
